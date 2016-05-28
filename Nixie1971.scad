@@ -17,20 +17,26 @@ module BasementPart(width=106, height=3, depth=78, padding=0.5, contactShaft=[83
 				BasementDesk(width=width, height=height, depth=depth, padding=padding, hole=8, holeEdgeDistance=holeEdgeDistance);
 				ContactShaft(width, height, depth, padding, contactShaft, contactShaftPadding, contactShaftOffset);
 			}
-			translate([0, 0, -(holeEdgeDistance - padding)]) BasementAttachmentLegs(distance=legDistance, diameter=legDiameter, length=legLength, width=width, depth=depth, padding=padding);
+			BasementAttachmentLegs(distance=legDistance, mainDiameter=legDiameter, diameter=legDiameter, length=legLength, width=width, depth=depth, padding=padding, holeEdgeDistance=holeEdgeDistance);
 		}
-		translate([0, height, -(((legDiameter - legHoleDiameter) / 2) + (holeEdgeDistance - padding))]) BasementAttachmentLegs(distance=legDistance, diameter=legHoleDiameter, length=legLength, width=width, depth=depth, padding=padding);
-		translate([0, -(legLength - height), -(((legDiameter - legScrewHoleDiameter) / 2) + (holeEdgeDistance - padding))]) BasementAttachmentLegs(distance=legDistance, diameter=legScrewHoleDiameter, length=(height * 2), width=width, depth=depth, padding=padding);
+		translate([0, height, 0]) BasementAttachmentLegs(distance=legDistance, mainDiameter=legDiameter, diameter=legHoleDiameter, length=legLength, width=width, depth=depth, padding=padding, holeEdgeDistance=holeEdgeDistance);
+		translate([0, -(legLength - height), 0]) BasementAttachmentLegs(distance=legDistance, mainDiameter=legDiameter, diameter=legScrewHoleDiameter, length=(height * 2), width=width, depth=depth, padding=padding, holeEdgeDistance=holeEdgeDistance);
 	}
 }
 
-module BasementAttachmentLegs(distance, diameter, length, width, depth, padding, $fn=100) {
+module BasementAttachmentLegs(distance, mainDiameter, diameter, length, width, depth, padding, holeEdgeDistance, $fn=100) {
 	width = (width - padding * 2);
 	depth = (depth - padding * 2);
 	rotate(a=[90,0,0]) {
-		translate([width / 2 - distance / 2, depth - (diameter / 2), 0]) {
-			cylinder(d=diameter, h=length);
-			translate([distance, 0]) cylinder(d=diameter, h=length);
+		translate([width / 2 - distance / 2, 0, 0]) {
+			translate([0, depth - (diameter / 2 + (mainDiameter - diameter) / 2) - holeEdgeDistance, 0]) {
+				cylinder(d=diameter, h=length);
+				translate([distance, 0]) cylinder(d=diameter, h=length);
+			}
+			translate([0, (diameter / 2) + holeEdgeDistance + (mainDiameter - diameter) / 2, 0]) {
+				cylinder(d=diameter, h=length);
+				translate([distance, 0]) cylinder(d=diameter, h=length);
+			}
 		}
 	}
 }
